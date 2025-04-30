@@ -1,0 +1,65 @@
+<!-- Líder do campeonato-->
+<div class="bg-gray-800 text-white  p-6 mb-6 flex items-center justify-between shadow-md">
+    <div class="flex items-center space-x-4">
+        <img *ngIf="liderPiloto?.flag" [src]="liderPiloto.flag" alt="Bandeira" class="w-10 h-6 rounded" />
+        <div>
+            <h2 class="text-xl font-bold">🏆 Líder Atual</h2>
+            <p>{{ liderPiloto?.Driver.givenName }} {{ liderPiloto?.Driver.familyName }} — {{ liderPiloto?.points }} pontos</p>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Carrossel-->
+<div class="relative w-full overflow-hidden">
+    <div class="flex transition-transform duration-500" [style.transform]="'translateX(-' + currentSlide * 100 + '%)'">
+        <div *ngFor="let piloto of classificacao" class="min-w-full p-6">
+            <div class="bg-gray-900 text-white rounded-xl shadow-md text-center p-6">
+
+                <!-- Nome + Bandeira -->
+                <h2 class="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+                    <img [src]="getCountryFlag(piloto.Driver.nationality)" alt="{{ piloto.Driver.nationality }}" class="w-6 h-4 rounded-sm shadow" /> {{ piloto.Driver.givenName }} {{ piloto.Driver.familyName }}
+                </h2>
+
+                <!-- Equipe -->
+                <p class="text-sm text-gray-400 mb-1">
+                    Equipe: {{ piloto.Constructors[0].name }}
+                </p>
+
+                <!-- Pontuação -->
+                <p class="text-yellow-400 text-lg font-semibold">
+                    Pontos: {{ piloto.points }}
+                </p>
+
+                <!-- Posição -->
+                <p class="text-sm mt-2">
+                    Posição: #{{ piloto.position }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botões -->
+    <button (click)="prevSlide()" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full z-10">
+    ‹
+  </button>
+    <button (click)="nextSlide()" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-2 rounded-full z-10">
+    ›
+  </button>
+</div>
+
+<!-- proximasCorridas-->
+
+
+<!-- ranking dos Construtores-->
+<div class="bg-gray-800 text-white rounded-xl p-6 mt-6 shadow-md">
+    <h2 class="text-2xl font-bold mb-4">🏎️ Ranking dos Construtores</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div *ngFor="let equipe of rankingConstrutores" class="bg-gray-700 p-4 rounded-lg text-center">
+            <h3 class="text-lg font-semibold">{{ equipe.Constructor.name }}</h3>
+            <p class="text-gray-300">Pontos: {{ equipe.points }}</p>
+            <p class="text-gray-400 text-sm">Posição: #{{ equipe.position }}</p>
+        </div>
+    </div>
+</div>

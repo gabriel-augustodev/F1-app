@@ -1,0 +1,15 @@
+<div class="p-6">
+    <h1 class="text-3xl font-bold text-white mb-6 text-center">Pilotos da Temporada</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div *ngFor="let piloto of pilotos" class="bg-gray-900 text-white rounded-lg p-4 shadow-lg flex items-center gap-4">
+            <img [src]="getFlagUrl(piloto.nationality)" alt="Bandeira" class="w-6 h-4 rounded-sm" />
+            <div>
+                <h2 class="text-xl font-semibold">{{ piloto.givenName }} {{ piloto.familyName }}</h2>
+                <p class="text-sm text-gray-400">Nacionalidade: {{ piloto.nationality }}</p>
+                <p class="text-sm text-gray-400">Número: {{ piloto.permanentNumber || 'N/A' }}</p>
+                <a [href]="piloto.url" target="_blank" class="text-blue-400 hover:underline text-sm">Ver perfil</a>
+            </div>
+        </div>
+    </div>
+</div>
