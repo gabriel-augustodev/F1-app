@@ -1,27 +1,63 @@
-# Frontend
+# 🏎️ Projeto F1 Dashboard - Angular
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.3.
+Este projeto é um painel interativo desenvolvido com Angular que consome a [API pública da Fórmula 1 (Ergast API)](https://ergast.com/mrd/) para exibir dados atualizados da temporada atual de F1.
 
-## Development server
+## 🚀 Funcionalidades
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- 🥇 Classificação atual de pilotos  
+- 🏆 Ranking de construtores  
+- 🏁 Voltas mais rápidas da temporada  
+- 📊 Visualização com gráficos de barras ou cartões para melhor análise  
+- 🇺🇳 Bandeiras dos pilotos baseadas na nacionalidade  
 
-## Code scaffolding
+## 📦 Tecnologias Utilizadas
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- Angular  
+- TypeScript  
+- Tailwind CSS  
+- RxJS  
+- Ergast API (F1)  
 
-## Build
+## 🧠 Como executar
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/f1-dashboard.git
+   cd f1-dashboard
+   ```
 
-## Running unit tests
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+3. Inicie o projeto:
+   ```bash
+   ng serve
+   ```
 
-## Running end-to-end tests
+4. Acesse no navegador:
+   ```
+   http://localhost:4200
+   ```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## 🛠️ Estrutura do Projeto
 
-## Further help
+```
+src/
+├── app/
+│   ├── components/
+│   │   └── home/
+│   │       ├── home.component.ts
+│   │       └── home.component.html
+│   ├── services/
+│   │   └── f1-api.service.ts
+│   └── utils/
+│       └── nationality-map.ts
+```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+
+

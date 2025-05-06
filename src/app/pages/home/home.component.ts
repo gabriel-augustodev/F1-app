@@ -9,9 +9,10 @@ import { nationalityToCountryCode } from '../../utils/nationality-map';
 export class HomeComponent implements OnInit {
   classificacao: any[] = [];
   rankingConstrutores: any[] = [];
-  liderPiloto: any = null; // 🏎️ ADICIONADO
-  proximasCorridas: any[] = []; // 🏁 ADICIONADO
+  liderPiloto: any = null;
+  proximasCorridas: any[] = [];
   currentSlide = 0;
+  voltaMaisRapida: any = null;
 
   constructor(private f1Api: F1ApiService) {}
 
@@ -40,7 +41,21 @@ export class HomeComponent implements OnInit {
         return new Date(corrida.date) > hoje;
       });
 
-      console.log('Proximas corridas:', this.proximasCorridas);
+      this.f1Api.getVoltaMaisRapidaUltimaCorrida().subscribe((res: any) => {
+        const resultados = res.MRData.RaceTable.Races[0].Results;
+        const maisRapida = resultados.find((r: any) => r.FastestLap?.rank === "1");
+
+        if (maisRapida) {
+          this.voltaMaisRapida = {
+            piloto: `${maisRapida.Driver.givenName} ${maisRapida.Driver.familyName}`,
+            equipe: maisRapida.Constructor.name,
+            tempo: maisRapida.FastestLap.Time.time,
+            corrida: res.MRData.RaceTable.Races[0].raceName
+          };
+        }
+      });
+
+
     });
   }
 

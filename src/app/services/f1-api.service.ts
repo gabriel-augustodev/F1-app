@@ -40,5 +40,9 @@ export class F1ApiService {
     return this.http.get(`${this.baseUrl}/current.json`);
   }
 
+  getVoltaMaisRapidaUltimaCorrida(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/current/last/results.json`);
+  }
+
 
 }
