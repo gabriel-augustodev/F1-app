@@ -22,7 +22,7 @@ Este projeto é um painel interativo desenvolvido com Angular que consome a [API
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/f1-dashboard.git
+   git clone https://github.com/GabrielAugustoFerreiraMaia/F1-app
    cd f1-dashboard
    ```
 

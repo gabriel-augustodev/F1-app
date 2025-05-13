@@ -12,6 +12,8 @@ import { PilotosComponent } from './pilotos/pilotos.component';
 import { EquipesComponent } from './equipes/equipes.component';
 import { CorridasComponent } from './corridas/corridas.component';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,7 +28,7 @@ import { CorridasComponent } from './corridas/corridas.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
