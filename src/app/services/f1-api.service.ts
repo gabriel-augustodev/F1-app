@@ -6,45 +6,61 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class F1ApiService {
-  private baseUrl = 'https://ergast.com/api/f1';
+  // URL do seu backend no Render (produção)
+  private apiUrl = 'https://f1-backend-api.onrender.com';
 
-  constructor(private http: HttpClient) {}
+  // Se quiser testar localmente, use esta linha (comente a de cima)
+  // private apiUrl = 'http://localhost:8000';
 
-  getPilotos(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/drivers.json`);
+  constructor(private http: HttpClient) { }
+
+  // ==================== CLASSIFICAÇÕES ====================
+
+  getDriverStandings(year: number = 2024): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/standings/drivers/${year}`);
   }
 
-  getCorridasAno(ano: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${ano}.json`);
+  getConstructorStandings(year: number = 2024): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/standings/constructors/${year}`);
   }
 
-  getResultadoCorrida(ano: number, numeroCorrida: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${ano}/${numeroCorrida}/results.json`);
+  // ==================== CALENDÁRIO ====================
+
+  getCalendar(year: number = 2024): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/calendar/${year}`);
   }
 
-  getClassificacaoPilotos(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/current/driverStandings.json`);
+  getNextRace(year: number = 2024): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/calendar/next/${year}`);
   }
 
-  getClassificacaoConstrutores(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/current/constructorStandings.json`);
+  // ==================== RESULTADOS ====================
+
+  getRaceResults(year: number, round: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/results/race/${year}/${round}`);
   }
 
-  // 🔥 ADICIONADO: Buscar todas as corridas do ano atual
-  getProximasCorridas(): Observable<any> {
-    const today = new Date().toISOString().split('T')[0]; // formato: yyyy-mm-dd
-    return this.http.get(`${this.baseUrl}/current.json?limit=1000&dateFrom=${today}`);
+  getFastestLaps(year: number, topN: number = 10): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/results/fastest-laps/${year}?top_n=${topN}`);
   }
 
-  getCalendarioTemporada(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/current.json`);
+  // ==================== CIRCUITOS ====================
+
+  getCircuitInfo(circuitId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/circuits/info/${circuitId}`);
   }
 
-  getVoltaMaisRapidaUltimaCorrida(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/current/last/results.json`);
+  getCircuitMap(year: number, gp: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/circuits/map/${year}/${gp}`);
   }
 
+  // ==================== HALL DA FAMA ====================
 
+  getHallOfFameDrivers(yearRange: string = '1950-2024', topN: number = 20): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/hall-of-fame/drivers?year_range=${yearRange}&top_n=${topN}`);
+  }
 
-
+  getCountryStats(country: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/hall-of-fame/by-country/${country}`);
+  }
 }

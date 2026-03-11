@@ -1,82 +1,155 @@
 import { Component, OnInit } from '@angular/core';
 import { F1ApiService } from '../../services/f1-api.service';
-import { nationalityToCountryCode } from '../../utils/nationality-map';
+import { nationalityMap } from '../../utils/nationality-map';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  classificacao: any[] = [];
-  rankingConstrutores: any[] = [];
-  liderPiloto: any = null;
-  proximasCorridas: any[] = [];
-  currentSlide = 0;
-  voltaMaisRapida: any = null;
+  // Dados
+  leader: any = null;
+  constructors: any[] = [];
+  nextRace: any = null;
 
-  constructor(private f1Api: F1ApiService) {}
+  // Temporada atual (mude para 2026)
+  currentYear = 2026;  // ✅ ALTERADO PARA 2026
+
+  totalRaces: number = 24; // Valor padrão, será atualizado quando carregar o calendário
+
+  // Estados
+  loading = true;
+  error: string | null = null;
+
+  // Lista de anos disponíveis (para futuro seletor)
+  availableYears = [2023, 2024, 2025, 2026];
+
+  // Utils
+  nationalityMap = nationalityMap;
+
+  constructor(private f1Api: F1ApiService) { }
 
   ngOnInit(): void {
-    // Classificação de pilotos
-    this.f1Api.getClassificacaoPilotos().subscribe((res: any) => {
-      this.classificacao = res.MRData.StandingsTable.StandingsLists[0].DriverStandings;
+    this.loadHomeData();
+  }
 
-      // Após carregar a classificação, definimos o líder
-      if (this.classificacao.length > 0) {
-        this.liderPiloto = this.classificacao[0];
+  loadHomeData(): void {
+    this.loading = true;
+    this.error = null;
+
+    console.log(`📅 Carregando dados da temporada ${this.currentYear}...`);
+
+    // Busca líder (primeiro lugar na classificação de pilotos)
+    this.f1Api.getDriverStandings(this.currentYear).subscribe({
+      next: (data) => {
+        console.log('✅ Dados de pilotos recebidos:', data);
+        if (data.standings && data.standings.length > 0) {
+          this.leader = data.standings[0];
+        }
+      },
+      error: (err) => {
+        console.error('❌ Erro ao carregar líder:', err);
+        this.error = 'Erro ao carregar dados dos pilotos';
       }
     });
 
-    // Classificação de construtores
-    this.f1Api.getClassificacaoConstrutores().subscribe((res: any) => {
-      this.rankingConstrutores = res.MRData.StandingsTable.StandingsLists[0].ConstructorStandings;
+    // Busca classificação de construtores
+    this.f1Api.getConstructorStandings(this.currentYear).subscribe({
+      next: (data) => {
+        console.log('✅ Dados de construtores recebidos:', data);
+        this.constructors = data.standings || [];
+      },
+      error: (err) => {
+        console.error('❌ Erro ao carregar construtores:', err);
+        this.error = 'Erro ao carregar dados dos construtores';
+      }
     });
 
-    // Próximas corridas
-    this.f1Api.getCalendarioTemporada().subscribe((res: any) => {
-      const todasCorridas = res.MRData.RaceTable.Races;
-      const hoje = new Date();
-
-      this.proximasCorridas = todasCorridas.filter((corrida: any) => {
-        return new Date(corrida.date) > hoje;
-      });
-
-      this.f1Api.getVoltaMaisRapidaUltimaCorrida().subscribe((res: any) => {
-        const resultados = res.MRData.RaceTable.Races[0].Results;
-        const maisRapida = resultados.find((r: any) => r.FastestLap?.rank === "1");
-
-        if (maisRapida) {
-          this.voltaMaisRapida = {
-            piloto: `${maisRapida.Driver.givenName} ${maisRapida.Driver.familyName}`,
-            equipe: maisRapida.Constructor.name,
-            tempo: maisRapida.FastestLap.Time.time,
-            corrida: res.MRData.RaceTable.Races[0].raceName
-          };
-        }
-      });
-
-
+    // Busca próxima corrida
+    this.f1Api.getNextRace(this.currentYear).subscribe({
+      next: (data) => {
+        console.log('✅ Próxima corrida:', data);
+        this.nextRace = data;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('❌ Erro ao carregar próxima corrida:', err);
+        this.error = 'Erro ao carregar calendário';
+        this.loading = false;
+      }
     });
   }
 
-  nextSlide(): void {
-    if (this.currentSlide < this.classificacao.length - 1) {
-      this.currentSlide++;
-    }
+  // Método para trocar de temporada (útil se quiser adicionar um seletor)
+  changeSeason(year: number): void {
+    this.currentYear = year;
+    this.loadHomeData();
   }
 
-  prevSlide(): void {
-    if (this.currentSlide > 0) {
-      this.currentSlide--;
-    }
+  getFlagUrl(nationality: string): string {
+    const code = this.nationalityMap[nationality] || 'unknown';
+    return `https://flagcdn.com/w320/${code}.png`;
   }
+  getCountryCode(country: string): string {
+    const countryCodes: { [key: string]: string } = {
+      'Australia': 'au',
+      'Bahrain': 'bh',
+      'China': 'cn',
+      'United Arab Emirates': 'ae',
+      'United Kingdom': 'gb',
+      'Great Britain': 'gb',
+      'UK': 'gb',
+      'Italy': 'it',
+      'Monaco': 'mc',
+      'Spain': 'es',
+      'Canada': 'ca',
+      'Austria': 'at',
+      'France': 'fr',
+      'Hungary': 'hu',
+      'Belgium': 'be',
+      'Netherlands': 'nl',
+      'Netherland': 'nl',
+      'Holland': 'nl',
+      'USA': 'us',
+      'United States': 'us',
+      'Mexico': 'mx',
+      'Brazil': 'br',
+      'Brasil': 'br',
+      'Saudi Arabia': 'sa',
+      'Japan': 'jp',
+      'Singapore': 'sg',
+      'Qatar': 'qa',
+      'Portugal': 'pt',
+      'Turkey': 'tr',
+      'Russia': 'ru',
+      'Germany': 'de',
+      'Azerbaijan': 'az',
+      'Malaysia': 'my',
+      'Korea': 'kr',
+      'South Korea': 'kr',
+      'India': 'in',
+      'South Africa': 'za',
+      'Argentina': 'ar',
+      'New Zealand': 'nz'
+    };
 
-  getCountryFlag(nationality: string): string {
-    const countryCode = nationalityToCountryCode[nationality];
-    if (countryCode) {
-      return `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`;
-    } else {
-      return `https://flagcdn.com/w40/un.png`;
+    // Tenta encontrar pelo nome exato, senão procura por substring
+    let code = countryCodes[country];
+
+    if (!code) {
+      // Busca case-insensitive
+      const countryLower = country.toLowerCase();
+      const found = Object.entries(countryCodes).find(([key]) =>
+        key.toLowerCase().includes(countryLower) ||
+        countryLower.includes(key.toLowerCase())
+      );
+      code = found ? found[1] : 'unknown';
     }
+
+    return code || 'unknown';
+  }
+  handleImageError(event: any): void {
+    event.target.src = 'https://flagcdn.com/w160/unknown.png';
   }
 }
