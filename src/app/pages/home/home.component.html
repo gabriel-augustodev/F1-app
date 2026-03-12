@@ -8,192 +8,333 @@
     </div>
 
     <!-- Conteúdo principal -->
-    <div *ngIf="!loading" class="space-y-12">
-      <!-- SEÇÃO 1: Líder do Campeonato -->
-      <section>
-        <h2
-          class="text-3xl font-bold text-gray-800 mb-6 flex items-center gap-2"
-        >
-          <span class="bg-red-600 w-2 h-8 rounded-full"></span>
-          Líder do Campeonato
-        </h2>
-
-        <div
-          *ngIf="leader"
-          class="bg-white rounded-2xl shadow-xl overflow-hidden max-w-2xl"
-        >
-          <!-- Background gradient -->
-          <div class="h-2 bg-gradient-to-r from-red-600 to-red-400"></div>
-
-          <div class="p-8">
-            <div class="flex items-center gap-6">
-              <!-- Bandeira -->
-              <div class="relative">
-                <img
-                  [src]="getFlagUrl(leader.driverNationality)"
-                  [alt]="leader.driverNationality"
-                  class="w-20 h-12 object-cover rounded-lg shadow-lg"
-                />
-              </div>
-
-              <!-- Informações do piloto -->
-              <div class="flex-1">
-                <h3 class="text-3xl font-bold text-gray-800">
-                  {{ leader.givenName }} {{ leader.familyName }}
-                </h3>
-                <p class="text-xl text-gray-600">
-                  {{ leader.constructorNames?.[0] }}
-                </p>
-
-                <!-- Estatísticas -->
-                <div class="flex gap-6 mt-4">
-                  <div>
-                    <span class="text-2xl font-bold text-red-600">{{
-                      leader.points
-                    }}</span>
-                    <span class="text-sm text-gray-500 ml-1">pontos</span>
-                  </div>
-                  <div>
-                    <span class="text-2xl font-bold text-gray-700">{{
-                      leader.wins
-                    }}</span>
-                    <span class="text-sm text-gray-500 ml-1">vitórias</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Número do carro (se tiver) -->
-              <div class="text-8xl font-black text-gray-200 opacity-50">
-                #{{ leader.position }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SEÇÃO 2: Próxima Corrida -->
-      <!-- Próxima Corrida com mais detalhes -->
+    <div *ngIf="!loading" class="space-y-8">
+      <!-- HEADER: Temporada e Estatísticas Rápidas -->
       <div
-        class="bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-2xl shadow-xl p-8"
+        class="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-2xl shadow-xl p-6"
       >
-        <div class="flex justify-between items-start">
+        <div class="flex flex-col md:flex-row justify-between items-center">
           <div>
-            <div
-              class="flex items-center gap-2 text-sm text-gray-400 uppercase tracking-wider mb-2"
-            >
-              <span class="bg-red-600 w-2 h-2 rounded-full"></span>
-              Rodada {{ nextRace.round }} de {{ totalRaces || 26 }}
+            <h1 class="text-3xl md:text-4xl font-bold">
+              Fórmula 1 {{ currentYear }}
+            </h1>
+            <p class="text-red-100 mt-2">
+              Temporada {{ currentYear }} • {{ stats.totalRaces }} corridas
+            </p>
+          </div>
+          <div class="flex gap-8 mt-4 md:mt-0">
+            <div class="text-center">
+              <span class="text-3xl font-bold">{{ stats.completedRaces }}</span>
+              <p class="text-sm text-red-200">Realizadas</p>
             </div>
-            <h3 class="text-3xl font-bold">{{ nextRace.event_name }}</h3>
-            <p class="text-xl text-gray-300 mt-1">{{ nextRace.country }}</p>
-
-            <!-- Contagem regressiva (opcional) -->
-            <div class="mt-6 flex gap-4">
-              <div class="text-center">
-                <span class="text-3xl font-bold text-red-500">15</span>
-                <p class="text-xs text-gray-400">dias</p>
-              </div>
-              <div class="text-center">
-                <span class="text-3xl font-bold text-red-500">08</span>
-                <p class="text-xs text-gray-400">horas</p>
-              </div>
-              <div class="text-center">
-                <span class="text-3xl font-bold text-red-500">24</span>
-                <p class="text-xs text-gray-400">min</p>
-              </div>
+            <div class="text-center">
+              <span class="text-3xl font-bold">{{ stats.remainingRaces }}</span>
+              <p class="text-sm text-red-200">Restantes</p>
+            </div>
+            <div class="text-center">
+              <span class="text-3xl font-bold">{{ constructors.length }}</span>
+              <p class="text-sm text-red-200">Equipes</p>
             </div>
           </div>
-
-          <!-- Bandeira do país -->
-          <!-- Bandeira do país -->
-          <img
-            [src]="
-              'https://flagcdn.com/w160/' +
-              getCountryCode(nextRace.country) +
-              '.png'
-            "
-            class="w-20 h-12 object-cover rounded-lg shadow-lg opacity-80"
-            [alt]="nextRace.country"
-            onerror="this.src = 'https://flagcdn.com/w160/unknown.png'"
-          />
         </div>
       </div>
 
-      <!-- SEÇÃO 3: Ranking de Construtores -->
-      <!-- Seção Ranking de Construtores -->
-      <section>
-        <h2
-          class="text-3xl font-bold text-gray-800 mb-6 flex items-center gap-2"
-        >
-          <span class="bg-red-600 w-2 h-8 rounded-full"></span>
-          Ranking de Construtores {{ currentYear }}
-        </h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- GRID PRINCIPAL: 2 colunas -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- COLUNA 1: Líder e Brasileiro -->
+        <div class="lg:col-span-1 space-y-6">
+          <!-- Card do Líder -->
           <div
-            *ngFor="let team of constructors"
-            class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+            *ngIf="leader"
+            class="bg-white rounded-2xl shadow-xl overflow-hidden"
           >
-            <!-- Destaque para Top 3 -->
             <div
-              class="p-6"
-              [ngClass]="{
-                'bg-gradient-to-r from-yellow-50 to-yellow-100 border-l-4 border-yellow-400':
-                  team.position === 1,
-                'bg-gradient-to-r from-gray-50 to-gray-100 border-l-4 border-gray-400':
-                  team.position === 2,
-                'bg-gradient-to-r from-orange-50 to-orange-100 border-l-4 border-orange-400':
-                  team.position === 3,
-              }"
+              class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-4"
             >
-              <div class="flex justify-between items-start">
-                <span
-                  class="text-4xl font-black"
-                  [ngClass]="{
-                    'text-yellow-500': team.position === 1,
-                    'text-gray-400': team.position === 2,
-                    'text-orange-600': team.position === 3,
-                    'text-gray-300': team.position > 3,
-                  }"
-                  >#{{ team.position }}</span
-                >
-                <span class="text-2xl font-bold text-red-600"
-                  >{{ team.points }} pts</span
-                >
+              <h2 class="text-xl font-bold">🏆 Líder do Campeonato</h2>
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-4">
+                <img
+                  [src]="getFlagUrl(leader.driverNationality)"
+                  [alt]="leader.driverNationality"
+                  class="w-16 h-10 object-cover rounded-lg shadow"
+                />
+                <div>
+                  <h3 class="text-2xl font-bold text-gray-800">
+                    {{ leader.givenName }} {{ leader.familyName }}
+                  </h3>
+                  <p class="text-gray-600">
+                    {{ leader.constructorNames?.[0] }}
+                  </p>
+                </div>
               </div>
+              <div class="grid grid-cols-2 gap-4 mt-6">
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                  <span class="text-3xl font-bold text-red-600">{{
+                    leader.points
+                  }}</span>
+                  <p class="text-sm text-gray-500">pontos</p>
+                </div>
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                  <span class="text-3xl font-bold text-gray-700">{{
+                    leader.wins
+                  }}</span>
+                  <p class="text-sm text-gray-500">vitórias</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-              <h3 class="text-xl font-bold text-gray-800 mt-4">
-                {{ team.constructorName }}
-              </h3>
-              <p class="text-gray-600">
-                {{ team.nationality || team.constructorNationality }}
-              </p>
+          <!-- Card do Brasileiro (Bortoleto) - CORRIGIDO -->
+          <div
+            *ngIf="hasBrazilianDrivers()"
+            class="bg-gradient-to-br from-green-500 to-green-700 text-white rounded-2xl shadow-xl overflow-hidden"
+          >
+            <div class="p-4 bg-green-800 bg-opacity-30">
+              <h2 class="text-lg font-bold flex items-center gap-2">
+                Brasileiro na F1
+              </h2>
+            </div>
+            <div *ngFor="let br of brazilianDrivers" class="p-6">
+              <div class="flex items-center gap-4">
+                <div>
+                  <h3 class="text-2xl font-bold">
+                    {{ br.givenName }} {{ br.familyName }}
+                  </h3>
+                  <p class="text-green-200">
+                    {{ br.constructorNames?.[0] || "Audi" }}
+                  </p>
+                </div>
+              </div>
+              <div class="flex gap-4 mt-4">
+                <div class="bg-green-600 bg-opacity-50 px-4 py-2 rounded-lg">
+                  <span class="text-2xl font-bold">{{ br.points || 0 }}</span>
+                  <span class="text-sm ml-1">pts</span>
+                </div>
+                <div class="bg-green-600 bg-opacity-50 px-4 py-2 rounded-lg">
+                  <span class="text-2xl font-bold"
+                    >{{ br.position || 0 }}º</span
+                  >
+                  <span class="text-sm ml-1">lugar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              <div class="mt-4 flex items-center gap-2 text-sm">
-                <span
-                  class="inline-block w-2 h-2 rounded-full"
-                  [ngClass]="{
-                    'bg-green-500': team.wins > 0,
-                    'bg-gray-300': team.wins === 0,
-                  }"
-                ></span>
-                <span class="text-gray-600"
-                  >{{ team.wins }}
-                  {{ team.wins === 1 ? "vitória" : "vitórias" }}</span
+        <!-- COLUNA 2: Próximas Corridas e Contagem Regressiva -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- PRÓXIMA CORRIDA COM CONTAGEM REGRESSIVA -->
+          <div
+            *ngIf="nextRaces.length > 0"
+            class="bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-2xl shadow-xl overflow-hidden"
+          >
+            <div class="p-6">
+              <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <span class="bg-red-600 w-2 h-6 rounded-full"></span>
+                PRÓXIMA CORRIDA
+              </h2>
+
+              <div class="flex flex-col md:flex-row gap-8 items-center">
+                <!-- Info da corrida -->
+                <div class="flex-1">
+                  <div class="flex items-center gap-4 mb-4">
+                    <img
+                      [src]="
+                        'https://flagcdn.com/w160/' +
+                        getCountryCode(nextRaces[0].country) +
+                        '.png'
+                      "
+                      class="w-16 h-10 object-cover rounded-lg shadow-lg"
+                    />
+                    <div>
+                      <p class="text-sm text-gray-400">
+                        Rodada {{ nextRaces[0].round }}
+                      </p>
+                      <h3 class="text-2xl font-bold">
+                        {{ nextRaces[0].event_name }}
+                      </h3>
+                      <p class="text-gray-300">{{ nextRaces[0].country }}</p>
+                    </div>
+                  </div>
+                  <p class="text-gray-400">
+                    {{ nextRaces[0].event_date | date: "fullDate" }}
+                  </p>
+                </div>
+
+                <!-- Contagem Regressiva -->
+                <div class="bg-gray-700 p-6 rounded-xl text-center">
+                  <p class="text-sm text-gray-300 mb-2">TEMPO RESTANTE</p>
+                  <div class="flex gap-4">
+                    <div>
+                      <span class="text-4xl font-bold text-red-500">{{
+                        countdown.days
+                      }}</span>
+                      <p class="text-xs text-gray-400">dias</p>
+                    </div>
+                    <div>
+                      <span class="text-4xl font-bold text-red-500">{{
+                        countdown.hours
+                      }}</span>
+                      <p class="text-xs text-gray-400">horas</p>
+                    </div>
+                    <div>
+                      <span class="text-4xl font-bold text-red-500">{{
+                        countdown.minutes
+                      }}</span>
+                      <p class="text-xs text-gray-400">min</p>
+                    </div>
+                    <div>
+                      <span class="text-4xl font-bold text-red-500">{{
+                        countdown.seconds
+                      }}</span>
+                      <p class="text-xs text-gray-400">seg</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PRÓXIMAS 3 CORRIDAS -->
+          <div class="bg-white rounded-2xl shadow-xl p-6">
+            <h2
+              class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2"
+            >
+              <span class="bg-red-600 w-2 h-6 rounded-full"></span>
+              Próximas Corridas
+            </h2>
+
+            <div class="space-y-4">
+              <div
+                *ngFor="let race of nextRaces; let i = index"
+                class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <span class="text-2xl">{{ i === 0 ? "⏳" : "📅" }}</span>
+                <img
+                  [src]="
+                    'https://flagcdn.com/w40/' +
+                    getCountryCode(race.country) +
+                    '.png'
+                  "
+                  class="w-8 h-6 object-cover rounded"
+                />
+                <div class="flex-1">
+                  <p class="font-semibold text-gray-800">
+                    {{ race.event_name }}
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    {{ race.event_date | date: "dd/MM/yyyy" }}
+                  </p>
+                </div>
+                <span class="text-sm font-bold text-red-600"
+                  >Rodada {{ race.round }}</span
                 >
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
 
-    <!-- Mensagem de erro -->
-    <div
-      *ngIf="error"
-      class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg max-w-2xl mx-auto"
-    >
-      {{ error }}
+      <!-- ÚLTIMO RESULTADO -->
+      <div
+        *ngIf="lastRace && lastRace.results"
+        class="bg-white rounded-2xl shadow-xl p-6"
+      >
+        <h2
+          class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="bg-red-600 w-2 h-6 rounded-full"></span>
+          Último Resultado: {{ lastRace.event_name }}
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Pódio com bandeiras e nomes -->
+          <div
+            *ngFor="let result of lastRace.results; let pos = index"
+            class="flex items-center gap-3 p-4 rounded-lg"
+            [ngClass]="{
+              'bg-yellow-50 border border-yellow-200': pos === 0,
+              'bg-gray-50 border border-gray-200': pos === 1,
+              'bg-orange-50 border border-orange-200': pos === 2,
+            }"
+          >
+            <!-- Medalha -->
+            <span class="text-3xl">{{
+              pos === 0 ? "🥇" : pos === 1 ? "🥈" : "🥉"
+            }}</span>
+
+            <!-- Informações do piloto -->
+            <div class="flex-1">
+              <p class="font-bold text-gray-800">
+                {{ result.givenName }} {{ result.familyName }}
+              </p>
+              <p class="text-sm text-gray-500 flex items-center gap-1">
+                {{ result.constructorId || "N/A" }}
+              </p>
+            </div>
+
+            <!-- Pontos (se disponível) -->
+            <span class="text-sm font-bold text-red-600"
+              >{{ result.points || 0 }} pts</span
+            >
+          </div>
+        </div>
+
+        <!-- Link para resultado completo (opcional) -->
+        <div class="text-right mt-4">
+          <a
+            [routerLink]="['/corridas', lastRace.round]"
+            class="text-sm text-red-600 hover:text-red-800 font-semibold"
+          >
+            Ver resultado completo →
+          </a>
+        </div>
+      </div>
+
+      <!-- Fallback se não tiver resultados -->
+      <div
+        *ngIf="lastRace && !lastRace.results"
+        class="bg-white rounded-2xl shadow-xl p-6"
+      >
+        <h2 class="text-xl font-bold text-gray-800 mb-4">
+          Último Resultado: {{ lastRace.event_name }}
+        </h2>
+        <p class="text-gray-500">Carregando resultados...</p>
+      </div>
+
+      <!-- TOP 3 CONSTRUTORES -->
+      <div class="bg-white rounded-2xl shadow-xl p-6">
+        <h2
+          class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="bg-red-600 w-2 h-6 rounded-full"></span>
+          Top 3 Construtores
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div
+            *ngFor="let team of constructors.slice(0, 3)"
+            class="text-center p-4 rounded-lg"
+            [ngClass]="{
+              'bg-yellow-50 border border-yellow-200': team.position === 1,
+              'bg-gray-50 border border-gray-200': team.position === 2,
+              'bg-orange-50 border border-orange-200': team.position === 3,
+            }"
+          >
+            <span class="text-4xl font-black text-gray-300"
+              >#{{ team.position }}</span
+            >
+            <h3 class="text-xl font-bold text-gray-800 mt-2">
+              {{ team.constructorName }}
+            </h3>
+            <p class="text-2xl font-bold text-red-600 mt-2">
+              {{ team.points }} pts
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
