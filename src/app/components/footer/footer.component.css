@@ -1,0 +1,23 @@
+/* Animações suaves para os links */
+a {
+  transition: all 0.2s ease;
+}
+
+/* Efeito hover nos links das redes sociais */
+.bg-gray-800 {
+  transition: background-color 0.2s ease;
+}
+
+.bg-gray-800:hover {
+  transform: translateY(-2px);
+}
+
+/* Barra de progresso animada */
+.h-2 div {
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Divisor com gradiente sutil */
+.border-t {
+  border-image: linear-gradient(90deg, transparent, #ef4444, transparent) 1;
+}
