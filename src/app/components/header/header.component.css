@@ -1,0 +1,48 @@
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Efeito de hover nos links */
+nav a {
+  position: relative;
+  overflow: hidden;
+}
+
+nav a::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+nav a:hover::before {
+  width: 200%;
+  height: 200%;
+}
+
+/* Estilo para o ícone do menu mobile */
+.hamburger-line {
+  transition: all 0.3s ease;
+}
+
+/* Barra de progresso animada */
+.h-1 div {
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
