@@ -55,9 +55,16 @@ export class F1ApiService {
   }
 
   // ==================== HALL DA FAMA ====================
-
   getHallOfFameDrivers(yearRange: string = '1950-2024', topN: number = 20): Observable<any> {
     return this.http.get(`${this.apiUrl}/api/hall-of-fame/drivers?year_range=${yearRange}&top_n=${topN}`);
+  }
+
+  getHallOfFameConstructors(yearRange: string = '1950-2024', topN: number = 10): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/hall-of-fame/constructors?year_range=${yearRange}&top_n=${topN}`);
+  }
+
+  getF1Records(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/hall-of-fame/records`);
   }
 
   getCountryStats(country: string): Observable<any> {

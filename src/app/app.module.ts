@@ -11,6 +11,8 @@ import { FooterComponent } from './components/footer/footer.component';
 import { PilotosComponent } from './pilotos/pilotos.component';
 import { EquipesComponent } from './equipes/equipes.component';
 import { CorridasComponent } from './corridas/corridas.component';
+import { HallOfFameComponent } from './pages/hall-of-fame/hall-of-fame.component';
+import { CommonModule } from '@angular/common';
 
 
 
@@ -23,12 +25,14 @@ import { CorridasComponent } from './corridas/corridas.component';
     FooterComponent,
     PilotosComponent,
     EquipesComponent,
-    CorridasComponent
+    CorridasComponent,
+    HallOfFameComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    CommonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

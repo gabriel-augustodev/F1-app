@@ -1,0 +1,290 @@
+<div class="min-h-screen bg-gray-100">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Título -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-800">🏆 Hall da Fama da F1</h1>
+      <p class="text-gray-600 mt-2">Os maiores campeões da história</p>
+    </div>
+
+    <!-- Tabs de navegação -->
+    <div class="flex justify-center gap-4 mb-8">
+      <button
+        (click)="activeTab = 'drivers'"
+        class="px-6 py-2 rounded-full font-semibold transition-all"
+        [ngClass]="
+          activeTab === 'drivers'
+            ? 'bg-red-600 text-white'
+            : 'bg-gray-200 text-gray-700'
+        "
+      >
+        Pilotos
+      </button>
+      <button
+        (click)="activeTab = 'constructors'"
+        class="px-6 py-2 rounded-full font-semibold transition-all"
+        [ngClass]="
+          activeTab === 'constructors'
+            ? 'bg-red-600 text-white'
+            : 'bg-gray-200 text-gray-700'
+        "
+      >
+        Construtores
+      </button>
+      <button
+        (click)="activeTab = 'records'"
+        class="px-6 py-2 rounded-full font-semibold transition-all"
+        [ngClass]="
+          activeTab === 'records'
+            ? 'bg-red-600 text-white'
+            : 'bg-gray-200 text-gray-700'
+        "
+      >
+        Recordes
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex justify-center items-center h-64">
+      <div
+        class="animate-spin rounded-full h-16 w-16 border-4 border-red-600 border-t-transparent"
+      ></div>
+    </div>
+
+    <!-- CONTEÚDO: PILOTOS -->
+    <div
+      *ngIf="
+        !loading && activeTab === 'drivers' && hallOfFameDrivers.length > 0
+      "
+    >
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div
+          class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-4"
+        >
+          <h2 class="text-2xl font-bold text-center">
+            🏆 Maiores Pilotos da História
+          </h2>
+        </div>
+
+        <div class="p-6">
+          <div class="space-y-4">
+            <div
+              *ngFor="let driver of hallOfFameDrivers; let i = index"
+              class="flex items-center gap-4 p-4 rounded-lg"
+              [ngClass]="{
+                'bg-yellow-50': i === 0,
+                'bg-gray-50': i === 1,
+                'bg-orange-50': i === 2,
+                'bg-white': i > 2,
+              }"
+            >
+              <!-- Posição -->
+              <span class="text-3xl font-black text-gray-400 w-12"
+                >#{{ i + 1 }}</span
+              >
+
+              <!-- Medalha para Top 3 -->
+              <span class="text-3xl">{{
+                i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : ""
+              }}</span>
+
+              <!-- Info do piloto -->
+              <div class="flex-1">
+                <div class="flex items-center gap-3">
+                  <h3 class="text-xl font-bold text-gray-800">
+                    <!-- Usando os nomes com underscore -->
+                    {{
+                      driver.given_name ||
+                        driver.givenName ||
+                        "Nome não disponível"
+                    }}
+                    {{ driver.family_name || driver.familyName || "" }}
+                  </h3>
+                  <span class="text-sm text-gray-500">
+                    ({{
+                      driver.nationality || driver.driverNationality || "??"
+                    }})
+                  </span>
+                </div>
+              </div>
+
+              <!-- Estatísticas -->
+              <div class="flex gap-6">
+                <div class="text-center">
+                  <span class="text-2xl font-bold text-red-600">{{
+                    driver.titles
+                  }}</span>
+                  <p class="text-xs text-gray-500">títulos</p>
+                </div>
+                <div class="text-center">
+                  <span class="text-2xl font-bold text-gray-700">{{
+                    driver.wins
+                  }}</span>
+                  <p class="text-xs text-gray-500">vitórias</p>
+                </div>
+                <div class="text-center">
+                  <span class="text-2xl font-bold text-gray-700">{{
+                    driver.podiums
+                  }}</span>
+                  <p class="text-xs text-gray-500">pódios</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTEÚDO: CONSTRUTORES -->
+    <div
+      *ngIf="
+        !loading &&
+        activeTab === 'constructors' &&
+        hallOfFameConstructors.length > 0
+      "
+    >
+      <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div
+          class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white p-4"
+        >
+          <h2 class="text-2xl font-bold text-center">
+            🏭 Maiores Construtores da História
+          </h2>
+        </div>
+
+        <div class="p-6">
+          <div class="space-y-4">
+            <div
+              *ngFor="let team of hallOfFameConstructors; let i = index"
+              class="flex items-center gap-4 p-4 rounded-lg"
+              [ngClass]="{
+                'bg-yellow-50': i === 0,
+                'bg-gray-50': i === 1,
+                'bg-orange-50': i === 2,
+                'bg-white': i > 2,
+              }"
+            >
+              <span class="text-3xl font-black text-gray-400 w-12"
+                >#{{ i + 1 }}</span
+              >
+              <span class="text-3xl">{{
+                i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : ""
+              }}</span>
+
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-gray-800">{{ team.name }}</h3>
+                <p class="text-sm text-gray-500">{{ team.nationality }}</p>
+              </div>
+
+              <div class="flex gap-6">
+                <div class="text-center">
+                  <span class="text-2xl font-bold text-red-600">{{
+                    team.titles
+                  }}</span>
+                  <p class="text-xs text-gray-500">títulos</p>
+                </div>
+                <div class="text-center">
+                  <span class="text-2xl font-bold text-gray-700">{{
+                    team.wins
+                  }}</span>
+                  <p class="text-xs text-gray-500">vitórias</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTEÚDO: RECORDES -->
+    <div
+      *ngIf="!loading && activeTab === 'records' && records"
+      class="grid grid-cols-1 md:grid-cols-2 gap-6"
+    >
+      <!-- Mais títulos -->
+      <div class="bg-white rounded-2xl shadow-xl p-6">
+        <h3
+          class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="text-yellow-500">🏆</span> Mais Títulos (Pilotos)
+        </h3>
+        <div class="space-y-3">
+          <div
+            *ngFor="let item of records.most_titles_driver"
+            class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+          >
+            <span class="font-semibold">{{ item.driver }}</span>
+            <span class="text-red-600 font-bold"
+              >{{ item.titles }} títulos</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Mais vitórias -->
+      <div class="bg-white rounded-2xl shadow-xl p-6">
+        <h3
+          class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="text-yellow-500">🏁</span> Mais Vitórias (Pilotos)
+        </h3>
+        <div class="space-y-3">
+          <div
+            *ngFor="let item of records.most_wins_driver"
+            class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+          >
+            <span class="font-semibold">{{ item.driver }}</span>
+            <span class="text-red-600 font-bold">{{ item.wins }} vitórias</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mais títulos construtores -->
+      <div class="bg-white rounded-2xl shadow-xl p-6">
+        <h3
+          class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="text-yellow-500">🏭</span> Mais Títulos (Construtores)
+        </h3>
+        <div class="space-y-3">
+          <div
+            *ngFor="let item of records.most_titles_constructor"
+            class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+          >
+            <span class="font-semibold">{{ item.constructor }}</span>
+            <span class="text-red-600 font-bold"
+              >{{ item.titles }} títulos</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Mais poles -->
+      <div class="bg-white rounded-2xl shadow-xl p-6">
+        <h3
+          class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2"
+        >
+          <span class="text-yellow-500">⚡</span> Mais Poles
+        </h3>
+        <div class="space-y-3">
+          <div
+            *ngFor="let item of records.most_poles_driver?.slice(0, 5)"
+            class="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+          >
+            <span class="font-semibold">{{ item.driver }}</span>
+            <span class="text-red-600 font-bold">{{ item.poles }} poles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensagem se não houver dados -->
+    <div
+      *ngIf="
+        !loading && activeTab === 'drivers' && hallOfFameDrivers.length === 0
+      "
+      class="text-center py-12 text-gray-500"
+    >
+      Nenhum dado disponível
+    </div>
+  </div>
+</div>

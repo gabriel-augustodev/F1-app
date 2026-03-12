@@ -1,33 +1,99 @@
 <header class="bg-black text-white shadow-md p-4">
-    <div class="container mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-3">
-            <img src="assets/logo-f1.png" alt="F1 Logo" class="w-10 h-10" />
-            <h1 class="text-xl font-bold tracking-wide">Fórmula 1 App</h1>
-        </div>
+  <div class="container mx-auto flex justify-between items-center">
+    <!-- Logo e Título -->
+    <div class="flex items-center gap-3">
+      <img src="assets/logo-f1.png" alt="F1 Logo" class="w-10 h-10" />
+      <h1 class="text-xl font-bold tracking-wide">Fórmula 1 App</h1>
+    </div>
 
-        <!-- Botão Mobile -->
-        <button class="md:hidden" (click)="toggleMenu()">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-           viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16" />
+    <!-- Botão Mobile -->
+    <button class="md:hidden" (click)="toggleMenu()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"
+        />
       </svg>
     </button>
 
-        <!-- Navegação Desktop -->
-        <nav class="hidden md:flex gap-6 text-sm">
-            <a routerLink="/" routerLinkActive="text-red-500" class="hover:text-red-500 transition">Home</a>
-            <a routerLink="/pilotos" routerLinkActive="text-red-500" class="hover:text-red-500 transition">Pilotos</a>
-            <a routerLink="/equipes" routerLinkActive="text-red-500" class="hover:text-red-500 transition">Equipes</a>
-            <a routerLink="/corridas" routerLinkActive="text-red-500" class="hover:text-red-500 transition">Corridas</a>
-        </nav>
-    </div>
+    <!-- Navegação Desktop -->
+    <nav class="hidden md:flex gap-6 text-sm">
+      <a
+        routerLink="/"
+        routerLinkActive="text-red-500"
+        class="hover:text-red-500 transition"
+        >Home</a
+      >
+      <a
+        routerLink="/pilotos"
+        routerLinkActive="text-red-500"
+        class="hover:text-red-500 transition"
+        >Pilotos</a
+      >
+      <a
+        routerLink="/equipes"
+        routerLinkActive="text-red-500"
+        class="hover:text-red-500 transition"
+        >Equipes</a
+      >
+      <a
+        routerLink="/corridas"
+        routerLinkActive="text-red-500"
+        class="hover:text-red-500 transition"
+        >Corridas</a
+      >
+      <!-- NOVO LINK: Hall da Fama -->
+      <a
+        routerLink="/hall-of-fame"
+        routerLinkActive="text-red-500"
+        class="hover:text-red-500 transition flex items-center gap-1"
+      >
+        <span>🏆</span> Hall da Fama
+      </a>
+    </nav>
+  </div>
 
-    <!-- Menu Mobile -->
-    <div *ngIf="menuAberto" class="md:hidden mt-4 flex flex-col gap-3 px-4">
-        <a routerLink="/home" routerLinkActive="text-red-500" class="hover:text-red-500 transition">Home</a>
-        <a routerLink="/pilotos" routerLinkActive="text-red-500" class="hover:text-red-500 transition">Pilotos</a>
-        <a routerLink="/equipes" routerLinkActive="text-red-500" class="hover:text-red-500 transition">Equipes</a>
-        <a routerLink="/corridas" routerLinkActive="text-red-500" class="hover:text-red-500 transition">Corridas</a>
-    </div>
+  <!-- Menu Mobile -->
+  <div *ngIf="menuAberto" class="md:hidden mt-4 flex flex-col gap-3 px-4">
+    <a
+      routerLink="/"
+      routerLinkActive="text-red-500"
+      class="hover:text-red-500 transition"
+      >Home</a
+    >
+    <a
+      routerLink="/pilotos"
+      routerLinkActive="text-red-500"
+      class="hover:text-red-500 transition"
+      >Pilotos</a
+    >
+    <a
+      routerLink="/equipes"
+      routerLinkActive="text-red-500"
+      class="hover:text-red-500 transition"
+      >Equipes</a
+    >
+    <a
+      routerLink="/corridas"
+      routerLinkActive="text-red-500"
+      class="hover:text-red-500 transition"
+      >Corridas</a
+    >
+    <!-- NOVO LINK: Hall da Fama no mobile -->
+    <a
+      routerLink="/hall-of-fame"
+      routerLinkActive="text-red-500"
+      class="hover:text-red-500 transition flex items-center gap-2"
+    >
+      <span>🏆</span> Hall da Fama
+    </a>
+  </div>
 </header>

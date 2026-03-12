@@ -4,6 +4,7 @@ import { PilotosComponent } from './pilotos/pilotos.component';
 import { EquipesComponent } from './equipes/equipes.component';
 import { CorridasComponent } from './corridas/corridas.component';
 import { HomeComponent } from './pages/home/home.component';
+import { HallOfFameComponent } from './pages/hall-of-fame/hall-of-fame.component';
 
 
 const routes: Routes = [
@@ -11,10 +12,11 @@ const routes: Routes = [
   { path: 'pilotos', component: PilotosComponent },
   { path: 'equipes', component: EquipesComponent },
   { path: 'corridas', component: CorridasComponent },
+  { path: 'hall-of-fame', component: HallOfFameComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
