@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { F1ApiService } from '../services/f1-api.service';
 
 @Component({
   selector: 'app-equipes',
@@ -7,28 +7,73 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./equipes.component.css']
 })
 export class EquipesComponent implements OnInit {
-  equipes: any[] = [];
+  // Dados
+  constructors: any[] = [];
 
-  constructor(private http: HttpClient) {}
+  // Estados
+  loading = true;
+  error: string | null = null;
+
+  // Temporada atual
+  currentYear = 2026;
+
+  // Anos disponíveis
+  availableYears = [2023, 2024, 2025, 2026];
+
+  constructor(private f1Api: F1ApiService) { }
 
   ngOnInit(): void {
-    this.http.get<any>('https://ergast.com/api/f1/current/constructors.json')
-      .subscribe((res) => {
-        this.equipes = res.MRData.ConstructorTable.Constructors;
-      });
+    this.loadConstructorStandings();
   }
 
-  getFlagUrl(nationality: string): string {
-    const flags: { [key: string]: string } = {
-      British: 'gb',
-      German: 'de',
-      Italian: 'it',
-      French: 'fr',
-      American: 'us',
-      Austrian: 'at',
-      Swiss: 'ch'
+  loadConstructorStandings(): void {
+    this.loading = true;
+    this.error = null;
+
+    console.log(`🏭 Carregando classificação de construtores ${this.currentYear}...`);
+
+    this.f1Api.getConstructorStandings(this.currentYear).subscribe({
+      next: (data) => {
+        console.log('✅ Dados recebidos:', data);
+        this.constructors = data.standings || [];
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('❌ Erro ao carregar construtores:', err);
+        this.error = 'Erro ao carregar dados dos construtores';
+        this.loading = false;
+      }
+    });
+  }
+
+  changeYear(year: number): void {
+    this.currentYear = year;
+    this.loadConstructorStandings();
+  }
+
+  // Cor da posição (Top 3)
+  getPositionClass(position: number): string {
+    if (position === 1) return 'bg-yellow-400 text-gray-900'; // Ouro
+    if (position === 2) return 'bg-gray-300 text-gray-800';  // Prata
+    if (position === 3) return 'bg-orange-400 text-gray-900'; // Bronze
+    return 'bg-gray-100 text-gray-600';
+  }
+
+  // Bandeira do país da equipe
+  getCountryFlag(nationality: string): string {
+    const countryCodes: { [key: string]: string } = {
+      'British': 'gb',
+      'German': 'de',
+      'Italian': 'it',
+      'French': 'fr',
+      'Austrian': 'at',
+      'American': 'us',
+      'Swiss': 'ch',
+      'Japanese': 'jp',
+      'Indian': 'in'
     };
-    const code = flags[nationality] || 'un';
-    return `https://flagcdn.com/h20/${code}.png`;
+
+    const code = countryCodes[nationality] || 'unknown';
+    return `https://flagcdn.com/w160/${code}.png`;
   }
 }
