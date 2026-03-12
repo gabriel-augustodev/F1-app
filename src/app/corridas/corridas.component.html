@@ -1,14 +1,167 @@
-<div class="p-6">
-    <h1 class="text-3xl font-bold text-white mb-6 text-center">Corridas da Temporada</h1>
+<div class="min-h-screen bg-gray-100">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Cabeçalho com seletor de ano -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+      <div class="flex items-center gap-3">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800">
+          📅 Calendário F1 {{ currentYear }}
+        </h1>
+        <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm">
+          {{ races.length }} corridas
+        </span>
+      </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <div *ngFor="let corrida of corridas" class="bg-gray-900 text-white rounded-lg p-4 shadow-lg">
-            <div class="flex items-center gap-2 mb-2">
-                <img [src]="getFlagUrl(corrida.Circuit.Location.country)" alt="Bandeira" class="w-6 h-4 rounded-sm" />
-                <h2 class="text-lg font-semibold">{{ corrida.raceName }}</h2>
-            </div>
-            <p class="text-sm text-gray-400">Local: {{ corrida.Circuit.Location.locality }}, {{ corrida.Circuit.Location.country }}</p>
-            <p class="text-sm text-gray-400">Data: {{ corrida.date | date:'dd/MM/yyyy' }}</p>
-        </div>
+      <div class="flex gap-2 mt-4 md:mt-0">
+        <button
+          *ngFor="let year of availableYears"
+          (click)="changeYear(year)"
+          class="px-4 py-2 rounded-lg font-semibold transition-all duration-200"
+          [ngClass]="
+            currentYear === year
+              ? 'bg-red-600 text-white shadow-lg'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+          "
+        >
+          {{ year }}
+        </button>
+      </div>
     </div>
+
+    <!-- Legenda de status -->
+    <div class="bg-white rounded-xl shadow-lg p-4 mb-8 flex flex-wrap gap-6">
+      <div class="flex items-center gap-2">
+        <span
+          class="w-4 h-4 bg-green-100 border-2 border-green-500 rounded"
+        ></span>
+        <span class="text-sm text-gray-600">Realizada</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span
+          class="w-4 h-4 bg-yellow-100 border-2 border-yellow-500 rounded ring-4 ring-yellow-200"
+        ></span>
+        <span class="text-sm text-gray-600">Hoje</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span
+          class="w-4 h-4 bg-blue-100 border-2 border-blue-500 rounded"
+        ></span>
+        <span class="text-sm text-gray-600">Próxima (7 dias)</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span
+          class="w-4 h-4 bg-gray-50 border-2 border-gray-300 rounded"
+        ></span>
+        <span class="text-sm text-gray-600">Futura</span>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex flex-col justify-center items-center h-64">
+      <div
+        class="animate-spin rounded-full h-16 w-16 border-4 border-red-600 border-t-transparent"
+      ></div>
+      <p class="mt-4 text-gray-600">Carregando calendário...</p>
+    </div>
+
+    <!-- Erro -->
+    <div
+      *ngIf="error"
+      class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg max-w-2xl mx-auto"
+    >
+      {{ error }}
+    </div>
+
+    <!-- Calendário Visual -->
+    <div *ngIf="!loading && !error" class="space-y-4">
+      <!-- Cards das corridas em grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          *ngFor="let race of races"
+          class="rounded-xl border-2 transition-all transform hover:-translate-y-1 hover:shadow-xl duration-300"
+          [ngClass]="getRaceStatus(race.event_date).color"
+        >
+          <!-- Cabeçalho do card -->
+          <div
+            class="p-4 border-b border-gray-200 bg-white bg-opacity-50 rounded-t-xl"
+          >
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">{{ getCountryFlag(race.country) }}</span>
+                <span class="text-sm font-semibold text-gray-500"
+                  >RODADA {{ race.round }}</span
+                >
+              </div>
+              <span class="text-2xl">{{
+                getRaceStatus(race.event_date).icon
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Corpo do card -->
+          <div class="p-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-1">
+              {{ race.event_name }}
+            </h3>
+            <p class="text-gray-600 mb-3">
+              {{ race.country }} • {{ race.location }}
+            </p>
+
+            <!-- Data e status -->
+            <div class="flex justify-between items-end">
+              <div>
+                <div class="text-sm text-gray-500">
+                  {{ getDayOfWeek(race.event_date) }}
+                </div>
+                <div class="text-2xl font-bold text-gray-800">
+                  {{ formatDate(race.event_date) }}
+                </div>
+              </div>
+
+              <!-- Badge de status -->
+              <div
+                class="px-3 py-1 rounded-full text-sm font-semibold"
+                [ngClass]="{
+                  'bg-green-600 text-white':
+                    getRaceStatus(race.event_date).status === 'realizada',
+                  'bg-yellow-500 text-white':
+                    getRaceStatus(race.event_date).status === 'hoje',
+                  'bg-blue-600 text-white':
+                    getRaceStatus(race.event_date).status === 'proxima',
+                  'bg-gray-600 text-white':
+                    getRaceStatus(race.event_date).status === 'futura',
+                }"
+              >
+                {{
+                  getRaceStatus(race.event_date).status === "realizada"
+                    ? "Realizada"
+                    : getRaceStatus(race.event_date).status === "hoje"
+                      ? "HOJE"
+                      : getRaceStatus(race.event_date).status === "proxima"
+                        ? "Em breve"
+                        : "Agendada"
+                }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Rodapé com sessões (opcional) -->
+          <div
+            class="px-4 pb-4 pt-2 text-xs text-gray-500 border-t border-gray-200"
+          >
+            <div class="flex gap-2 flex-wrap">
+              <span
+                *ngFor="let session of race.sessions?.slice(0, 2)"
+                class="bg-gray-200 px-2 py-1 rounded"
+              >
+                {{ session.name }}
+              </span>
+              <span *ngIf="race.sessions?.length > 2" class="text-gray-400">
+                +{{ race.sessions.length - 2 }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
